@@ -1,8 +1,7 @@
-#include <stdio.h>
+#include "Core.h"
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
+#include "ShaderReader.h"
+#include <iostream>
 int main()
 {
 	if (glfwInit() != GLFW_TRUE)
@@ -39,6 +38,10 @@ int main()
 	}
 
 	glViewport(0, 0, bufferWidth, bufferHeight);
+
+	ShaderReader s("res/shader/basic.shader");
+	std::cout << s.GetVS() << std::endl;
+	std::cout << s.GetFS() << std::endl;
 
 	while (!glfwWindowShouldClose(myWindow))
 	{
