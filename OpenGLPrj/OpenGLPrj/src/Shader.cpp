@@ -10,7 +10,7 @@ Shader::Shader(const char* filePath)
 
 Shader::~Shader()
 {
-	glDeleteProgram(m_shaderID);
+	GLCall(glDeleteProgram(m_shaderID));
 }
 
 unsigned int Shader::GetProjectionLocation()
@@ -31,17 +31,17 @@ unsigned int Shader::GetViewLocation()
 
 void Shader::Bind()
 {
-	glUseProgram(m_shaderID);
+	GLCall(glUseProgram(m_shaderID));
 }
 
 void Shader::Unbind()
 {
-	glUseProgram(0);
+	GLCall(glUseProgram(0));
 }
 
 unsigned int Shader::CompileShader(GLenum shaderType)
 {
-	unsigned int shader = glCreateShader(shaderType);
+	GLCall(unsigned int shader = glCreateShader(shaderType));
 	if (!shader)
 	{
 		std::cout << "[INITIALIZE] Can't create shader" << std::endl;
@@ -57,20 +57,20 @@ unsigned int Shader::CompileShader(GLenum shaderType)
 		str = m_source.GetFS();
 	}
 	const char* source = str.c_str();
-	glShaderSource(shader, 1, &source, nullptr);
-	glCompileShader(shader);
+	GLCall(glShaderSource(shader, 1, &source, nullptr));
+	GLCall(glCompileShader(shader));
 
 	int res;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &res);
+	GLCall(glGetShaderiv(shader, GL_COMPILE_STATUS, &res));
 	if (!res)
 	{
 		int length;
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+		GLCall(glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length));
 		char* error = (char*)(alloca(sizeof(char)*length));
-		glGetShaderInfoLog(shader, length, &length, error);
+		GLCall(glGetShaderInfoLog(shader, length, &length, error));
 		const char* shadeType = ((shaderType == GL_VERTEX_SHADER) ? "Vertex Shader" : "Fragment Shader");
 		std::cout << "[ERROR] Compile " << shadeType << "failed: " << std::endl << error << std::endl;
-		glDeleteShader(shader);
+		GLCall(glDeleteShader(shader));
 		return 0;
 	}
 
@@ -79,7 +79,7 @@ unsigned int Shader::CompileShader(GLenum shaderType)
 
 void Shader::CreateShader()
 {
-	m_shaderID = glCreateProgram();
+	GLCall(m_shaderID = glCreateProgram());
 	if (!m_shaderID)
 	{
 		std::cout << "[INITIALIZE] Can't create program" << std::endl;
@@ -92,15 +92,15 @@ void Shader::CreateShader()
 		return;
 	}
 
-	glAttachShader(m_shaderID, vs);
-	glAttachShader(m_shaderID, fs);
-	glLinkProgram(m_shaderID);
-	glValidateProgram(m_shaderID);
+	GLCall(glAttachShader(m_shaderID, vs));
+	GLCall(glAttachShader(m_shaderID, fs));
+	GLCall(glLinkProgram(m_shaderID));
+	GLCall(glValidateProgram(m_shaderID));
 
-	glDeleteShader(vs);
-	glDeleteShader(fs);
+	GLCall(glDeleteShader(vs));
+	GLCall(glDeleteShader(fs));
 
-	m_uniformModel = glGetUniformLocation(m_shaderID, "model");
-	m_uniformProj = glGetUniformLocation(m_shaderID, "proj");
-	m_uniformView = glGetUniformLocation(m_shaderID, "view");
+	GLCall(m_uniformModel = glGetUniformLocation(m_shaderID, "model"));
+	GLCall(m_uniformProj = glGetUniformLocation(m_shaderID, "proj"));
+	GLCall(m_uniformView = glGetUniformLocation(m_shaderID, "view"));
 }
