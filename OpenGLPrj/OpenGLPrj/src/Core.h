@@ -1,9 +1,10 @@
-#pragma once
+#ifndef CORE_H
+#define CORE_H
 
+#include <GL/glew.h>
 #include <iostream>
 
-#include <gl/glew.h>
-#include <glfw/glfw3.h>
+void __debugbreak();
 
 void GLClear()
 {
@@ -25,3 +26,6 @@ bool GLLogError(const char* function, const char* file, int line)
 #define GLCall(x)	GLClear();\
 					x;\
 					ASSERT(GLLogError(#x,__FILE__,__LINE__));
+					
+
+#endif
