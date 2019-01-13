@@ -1,10 +1,11 @@
 #include "ShaderReader.h"
+#include <iostream>
 #include <fstream>
 #include <sstream>
 
 ShaderReader::ShaderReader(const char* filePath)
 {
-	sources = ParseString(filePath);
+	m_sources = ParseString(filePath);
 }
 
 ShaderReader::~ShaderReader()
@@ -14,6 +15,11 @@ ShaderReader::~ShaderReader()
 ShaderReader::ShaderSource ShaderReader::ParseString(const char* filePath)
 {
 	std::ifstream input(filePath);
+	if(!input)
+	{
+		std::cout << "[ERROR] Shader is not in a valid directory!" << std::endl;
+		m_sources.VertexShader = m_sources.FragmentShader = "\0";
+	}
 	std::stringstream ss[2];
 	enum class ShaderTypes
 	{

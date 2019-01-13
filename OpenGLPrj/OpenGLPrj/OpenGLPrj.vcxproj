@@ -120,12 +120,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\ShaderReader.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\ShaderReader.h" />
     <ClInclude Include="src\Core.h" />
+    <ClInclude Include="src\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader\basic.shader" />

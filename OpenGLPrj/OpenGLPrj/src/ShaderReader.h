@@ -12,14 +12,14 @@ public:
 		ShaderSource(std::string vs, std::string fs) :VertexShader(vs), FragmentShader(fs) {};
 	};
 public:
-	ShaderReader() : sources() {};
+	ShaderReader() : m_sources() {};
 	ShaderReader(const char* filePath);
 	~ShaderReader();
 
 	ShaderSource ParseString(const char* filePath);
-	std::string GetVS() { return sources.VertexShader; }
-	std::string GetFS() { return sources.FragmentShader; }
+	std::string GetVS() { return m_sources.VertexShader; }
+	std::string GetFS() { return m_sources.FragmentShader; }
 private:
-	ShaderSource sources;
+	ShaderSource m_sources;
 };
 
