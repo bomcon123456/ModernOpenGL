@@ -114,15 +114,15 @@ void Window::HandleMouse(GLFWwindow* window, double xPos, double yPos)
     Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
     if(theWindow->m_mousedFirstMoved)
     {
-        theWindow->m_lastX = xPos;
-        theWindow->m_lastY = yPos;
+        theWindow->m_lastX = (float)xPos;
+        theWindow->m_lastY = (float)yPos;
         theWindow->m_mousedFirstMoved = false;
     }
 
-    theWindow->m_xChange = xPos - theWindow->m_lastX;
-    theWindow->m_yChange = theWindow->m_lastY - yPos;
+    theWindow->m_xChange = (float)xPos - theWindow->m_lastX;
+    theWindow->m_yChange = theWindow->m_lastY - (float)yPos;
 
-    theWindow->m_lastY = yPos;
-    theWindow->m_lastX = xPos;
+    theWindow->m_lastY = (float)yPos;
+    theWindow->m_lastX = (float)xPos;
 
 }

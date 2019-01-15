@@ -1,9 +1,12 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include "Core.h"
 
 #include "Window.h"
 #include "Shader.h"
 #include "Mesh.h"
 #include "Camera.h"
+#include "Texture.h"
 
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
@@ -19,16 +22,19 @@ std::vector<Shader *> shaderList;
 std::vector<Mesh *> meshList;
 Camera camera;
 
+Texture brickTexture;
+Texture dirtTexture;
+
 float deltaTime = 0.f;
 float lastTime = 0.f;
 
 void CreateMeshes()
 {
 	float vertices[] = {
-		-1.f, -1.f, 0.f,
-		 0.f, -1.f, 1.f,
-		 1.f, -1.f, 0.f,
-		 0.f, 1.f, 0.f
+		-1.f, -1.f, 0.f, 0.f,  0.f,
+		 0.f, -1.f, 1.f, 0.5f, 0.f,
+		 1.f, -1.f, 0.f, 1.f,  0.f,
+		 0.f,  1.f, 0.f, 0.5f, 1.f
 	};
 
 	unsigned int indices[] ={
@@ -39,11 +45,11 @@ void CreateMeshes()
 	};
 
 	Mesh *mesh1 = new Mesh();
-	mesh1->CreateMesh(vertices, indices, 12, 12);
+	mesh1->CreateMesh(vertices, indices, 20, 12);
 	meshList.push_back(mesh1);
 
 	Mesh *mesh2 = new Mesh();
-	mesh2->CreateMesh(vertices, indices, 12, 12);
+	mesh2->CreateMesh(vertices, indices, 20, 12);
 	meshList.push_back(mesh2);
 }
 
@@ -67,18 +73,22 @@ int main()
 
 	camera = Camera(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), -90.f, 0.f, 5.f, 0.5f);
 
-	float bufferWidth = (float)window.GetBufferWidth();
-	float bufferHeight = (float)window.GetBufferHeight();
+	brickTexture = Texture("res/textures/brick.png");
+	brickTexture.LoadTexture();
 
-	glm::mat4 proj(1.0f);
-	
+	dirtTexture = Texture("res/textures/dirt.png");
+	dirtTexture.LoadTexture();
+
 	unsigned int uniformModel = 0, uniformView = 0, uniformProj = 0;
 
+	float bufferWidth = (float)window.GetBufferWidth();
+	float bufferHeight = (float)window.GetBufferHeight();
+	glm::mat4 proj(1.0f);
 	proj = glm::perspective(45.0f, bufferWidth / bufferHeight, 0.1f, 100.f);
 
 	while (!(window.GetShouldClose()))
 	{
-		float now = glfwGetTime();
+		float now = (float)glfwGetTime();
 		deltaTime = now - lastTime;
 		lastTime = now;
 
@@ -106,15 +116,20 @@ int main()
 			GLCall(glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)));
 			GLCall(glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view)));
 			GLCall(glUniformMatrix4fv(uniformProj, 1, GL_FALSE, glm::value_ptr(proj)));
-
+			brickTexture.Bind();
 			meshList[0]->RenderMesh();
+			brickTexture.Unbind();
+
+			// Second mesh
 
 			model = glm::mat4(1.0f);
 			model = glm::translate(model, glm::vec3(0.f, 1.f, -2.5f));
 			model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.f));
 
 			GLCall(glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)));
+			dirtTexture.Bind();
 			meshList[1]->RenderMesh();
+			dirtTexture.Bind();
 
 		shaderList[0]->Unbind();
 

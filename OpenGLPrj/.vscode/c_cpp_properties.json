@@ -4,6 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceRoot}/OpenGLPrj/src/",
+                "${workspaceRoot}/OpenGLPrj/src/vendor/",
                 "${workspaceRoot}/Dependencies/include/",
                 "C:/MinGW/lib/gcc/mingw32/6.3.0/include/c++",
                 "C:/MinGW/lib/gcc/mingw32/6.3.0/include/c++/mingw32",
@@ -23,6 +24,8 @@
             "browse": {
                 "path": [
                     "${workspaceRoot}/OpenGLPrj/src/",
+                    "${workspaceRoot}/OpenGLPrj/src/vendor/",
+                    "${workspaceRoot}/Dependencies/include/",
                     "${workspaceRoot}/Dependencies/include/",
                     "C:/MinGW/lib/gcc/mingw32/6.3.0/include/c++",
                     "C:/MinGW/lib/gcc/mingw32/6.3.0/include/c++/mingw32",
