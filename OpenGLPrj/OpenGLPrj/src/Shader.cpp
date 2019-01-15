@@ -29,6 +29,16 @@ unsigned int Shader::GetViewLocation()
 	return m_uniformView;
 }
 
+unsigned int Shader::GetAmbientColorLocation()
+{
+	return m_uniformAmbientColor;
+}
+
+unsigned int Shader::GetAmbientIntensityLocation()
+{
+	return m_uniformAmbientIntensity;
+}
+
 void Shader::Bind()
 {
 	GLCall(glUseProgram(m_shaderID));
@@ -103,4 +113,6 @@ void Shader::CreateShader()
 	GLCall(m_uniformModel = glGetUniformLocation(m_shaderID, "model"));
 	GLCall(m_uniformProj = glGetUniformLocation(m_shaderID, "proj"));
 	GLCall(m_uniformView = glGetUniformLocation(m_shaderID, "view"));
+	GLCall(m_uniformAmbientColor = glGetUniformLocation(m_shaderID, "directionalLight.color"));
+	GLCall(m_uniformAmbientIntensity = glGetUniformLocation(m_shaderID, "directionalLight.ambientIntensity"));
 }

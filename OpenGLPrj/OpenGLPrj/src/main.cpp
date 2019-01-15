@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "Light.h"
 
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
@@ -24,6 +25,8 @@ Camera camera;
 
 Texture brickTexture;
 Texture dirtTexture;
+
+Light mainLight;
 
 float deltaTime = 0.f;
 float lastTime = 0.f;
@@ -79,7 +82,9 @@ int main()
 	dirtTexture = Texture("res/textures/dirt.png");
 	dirtTexture.LoadTexture();
 
-	unsigned int uniformModel = 0, uniformView = 0, uniformProj = 0;
+	mainLight = Light(1.f, 0.f, 1.f, 0.2f);
+
+	unsigned int uniformModel = 0, uniformView = 0, uniformProj = 0, uniformAmbientColor = 0, uniformAmbientIntensity = 0;
 
 	float bufferWidth = (float)window.GetBufferWidth();
 	float bufferHeight = (float)window.GetBufferHeight();
@@ -102,23 +107,35 @@ int main()
 
 		shaderList[0]->Bind();
 
+			// GET UNIFORM
 			uniformModel = shaderList[0]->GetModelLocation();
 			uniformProj = shaderList[0]->GetProjectionLocation();
 			uniformView = shaderList[0]->GetViewLocation();
+			uniformAmbientColor = shaderList[0]->GetAmbientColorLocation();
+			uniformAmbientIntensity = shaderList[0]->GetAmbientIntensityLocation();
+			///////////////////////////
 
+			// LIGHTING
+			mainLight.UseLight(uniformAmbientIntensity, uniformAmbientColor);
+
+			// AFFINE TRANSFORMATION
 			// Create Identity Matrix
 			glm::mat4 model(1.0f);
 			model = glm::translate(model, glm::vec3(0.f, 0.f, -2.5f));
 			model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.f));
 
 			glm::mat4 view = camera.CalculateViewMatrix();
-
 			GLCall(glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)));
 			GLCall(glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view)));
 			GLCall(glUniformMatrix4fv(uniformProj, 1, GL_FALSE, glm::value_ptr(proj)));
+			///////////////////////////
+
+			// TEXTURE + DRAW
 			brickTexture.Bind();
 			meshList[0]->RenderMesh();
 			brickTexture.Unbind();
+			///////////////////////////
+
 
 			// Second mesh
 
