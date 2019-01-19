@@ -19,6 +19,7 @@ class Mesh
     unsigned int m_indexCount;
     unsigned int PositionSlot = 0;
     unsigned int UVSlot = 1;
+    unsigned int NormalSlot = 2;
 };
 
 #endif

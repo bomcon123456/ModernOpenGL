@@ -39,6 +39,16 @@ unsigned int Shader::GetAmbientIntensityLocation()
 	return m_uniformAmbientIntensity;
 }
 
+unsigned int Shader::GetDiffuseIntensityLocation()
+{
+	return m_uniformDiffuseIntensity;
+}
+
+unsigned int Shader::GetDiffuseDirectionLocation()
+{
+	return m_uniformDiffuseDirection;
+}
+
 void Shader::Bind()
 {
 	GLCall(glUseProgram(m_shaderID));
@@ -115,4 +125,6 @@ void Shader::CreateShader()
 	GLCall(m_uniformView = glGetUniformLocation(m_shaderID, "view"));
 	GLCall(m_uniformAmbientColor = glGetUniformLocation(m_shaderID, "directionalLight.color"));
 	GLCall(m_uniformAmbientIntensity = glGetUniformLocation(m_shaderID, "directionalLight.ambientIntensity"));
+	GLCall(m_uniformDiffuseIntensity = glGetUniformLocation(m_shaderID, "directionalLight.diffuseIntensity"));
+	GLCall(m_uniformDiffuseDirection = glGetUniformLocation(m_shaderID, "directionalLight.direction"));
 }
