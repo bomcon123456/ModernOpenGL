@@ -10,12 +10,14 @@ class Camera
 {
   public:
 	Camera();
-    Camera(glm::vec3 pos, glm::vec3 up, float yaw, float pitch, float moveSpeed, float turnSpeed );
-    ~Camera();
+	Camera(glm::vec3 pos, glm::vec3 up, float yaw, float pitch, float moveSpeed, float turnSpeed);
+	~Camera();
 
-	void KeyControl(bool* keys, float deltaTime);
+	void KeyControl(bool *keys, float deltaTime);
 	void MouseControl(float xChange, float yChange);
-	
+
+	glm::vec3 GetCameraPosition();
+
 	glm::mat4 CalculateViewMatrix();
 
   private:
