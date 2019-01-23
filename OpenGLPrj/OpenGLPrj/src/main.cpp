@@ -7,8 +7,9 @@
 #include "Mesh.h"
 #include "Camera.h"
 #include "Texture.h"
-#include "Light.h"
 #include "Material.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
 
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
@@ -30,7 +31,8 @@ Texture dirtTexture;
 Material shinyMaterial;
 Material dullMaterial;
 
-Light mainLight;
+DirectionalLight mainLight;
+PointLight pointLights[MAX_POINT_LIGHTS];
 
 float deltaTime = 0.f;
 float lastTime = 0.f;
@@ -102,6 +104,19 @@ void CreateMeshes()
 		0, 1, 2
 	};
 
+
+	float floorVertices[] = {
+		-10.f, 0.f, -10.f,	0.f, 0.f,		0.f, -1.f, 0.f,
+		10.f, 0.f, -10.f,	10.f, 0.f,		0.f, -1.f, 0.f,
+		-10.f, 0.f, 10.f,	0.f, 10.f,		0.f, -1.f, 0.f,
+		10.f, 0.f, 10.f,	10.f, 10.f,		0.f, -1.f, 0.f
+	};
+
+	unsigned int floorIndices[] = {
+		0, 2, 1,
+		1, 2, 3
+	};
+
 	calcAverageNormals(indices, 12, vertices, 32, 8, 5);
 
 	Mesh *mesh1 = new Mesh();
@@ -111,6 +126,10 @@ void CreateMeshes()
 	Mesh *mesh2 = new Mesh();
 	mesh2->CreateMesh(vertices, indices, 32, 12);
 	meshList.push_back(mesh2);
+
+	Mesh *mesh3 = new Mesh();
+	mesh3->CreateMesh(floorVertices, floorIndices, 32, 6);
+	meshList.push_back(mesh3);
 }
 
 void CreateShader()
@@ -142,14 +161,24 @@ int main()
 	shinyMaterial = Material(1.f, 32);
 	dullMaterial = Material(0.3f, 4);
 
-	mainLight = Light(1.f, 1.f, 1.f, 0.1f, 2.0f, -1.f, -2.f, 0.1f);
+	mainLight = DirectionalLight(1.f, 1.f, 1.f,
+								 0.1f, 0.3f,
+								 0.0f, 0.f, -1.f);
 
+	unsigned int pointLightCount = 0;
+	pointLights[0] = PointLight(0.0f, 0.f, 1.f, 
+								0.1f, 0.4f,
+								4.f, 0.f, 0.f,
+								0.3f, 0.2f, 0.1f);
+	pointLightCount++;
+	pointLights[1] = PointLight(0.0f, 1.f, 0.f,
+								0.1f, 1.0f,
+								-4.f, 2.f, 0.f,
+								0.3f, 0.1f, 0.1f);
+	pointLightCount++;
 
 	// Uniform Location
 	unsigned int uniformModel = 0, uniformView = 0, uniformProj = 0, uniformEyePosition = 0;
-
-	unsigned int uniformAmbientColor = 0, uniformAmbientIntensity = 0;
-	unsigned int uniformDirection = 0, uniformDiffuseIntensity = 0;
 
 	unsigned int uniformSpecularIntensity = 0, uniformShininess = 0;
 	// Uniform Location
@@ -182,12 +211,6 @@ int main()
 			uniformView = shaderList[0]->GetViewLocation();
 			uniformEyePosition = shaderList[0]->GetEyePositionLocation();
 
-			uniformAmbientColor = shaderList[0]->GetAmbientColorLocation();
-			uniformAmbientIntensity = shaderList[0]->GetAmbientIntensityLocation();
-			
-			uniformDirection = shaderList[0]->GetDiffuseDirectionLocation();
-			uniformDiffuseIntensity = shaderList[0]->GetDiffuseIntensityLocation();
-
 			uniformSpecularIntensity = shaderList[0]->GetSpecularIntensityLocation();
 			uniformShininess= shaderList[0]->GetShininessLocation();
 			///////////////////////////
@@ -200,14 +223,14 @@ int main()
 			////////////////////////////
 
 			// LIGHTING
-			mainLight.UseLight(uniformAmbientIntensity, uniformAmbientColor, uniformDiffuseIntensity, uniformDirection);
+			shaderList[0]->SetDirectionalLight(&mainLight);
+			shaderList[0]->SetPointLights(pointLights, pointLightCount);
 			///////////////////////////
 
 			// AFFINE TRANSFORMATION
 			// Create Identity Matrix
 			glm::mat4 model(1.0f);
-			model = glm::translate(model, glm::vec3(0.f, 0.f, -2.5f));
-			model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
+			model = glm::translate(model, glm::vec3(0.f, -1.f, 0.f));
 
 			GLCall(glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)));
 
@@ -228,8 +251,7 @@ int main()
 
 			// MODEL MATRIX
 			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(0.f, 1.f, -2.5f));
-			model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
+			model = glm::translate(model, glm::vec3(3.f, -1.f, 0.f));
 
 			GLCall(glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)));
 			//////////////////////////
@@ -238,6 +260,22 @@ int main()
 			dirtTexture.Bind();
 			dullMaterial.Bind(uniformSpecularIntensity, uniformShininess);
 			meshList[1]->RenderMesh();
+			dirtTexture.Bind();
+			/////////////////////////
+
+			// FLOOR
+
+			// MODEL MATRIX
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(0.f, -2.f, 0.f));
+
+			GLCall(glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)));
+			//////////////////////////
+
+			// TEXTURE + MATERIAL + DRAW
+			dirtTexture.Bind();
+			dullMaterial.Bind(uniformSpecularIntensity, uniformShininess);
+			meshList[2]->RenderMesh();
 			dirtTexture.Bind();
 			/////////////////////////
 

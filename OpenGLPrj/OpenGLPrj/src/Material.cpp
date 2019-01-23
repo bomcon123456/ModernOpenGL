@@ -10,8 +10,8 @@ Material::Material(float sIntensity, float shine) : m_specularIntensity(sIntensi
 
 void Material::Bind(unsigned int specularIntensityLocation, unsigned int shininessLocation)
 {
-    glUniform1f(specularIntensityLocation, m_specularIntensity);
-    glUniform1f(shininessLocation, m_shininess);
+	GLCall(glUniform1f(specularIntensityLocation, m_specularIntensity));
+	GLCall(glUniform1f(shininessLocation, m_shininess));
 }
 
 Material::~Material()

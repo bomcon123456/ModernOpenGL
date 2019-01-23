@@ -5,6 +5,8 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+#define MAX_POINT_LIGHTS 3
+
 void __debugbreak();
 
 void GLClear();

@@ -8,7 +8,7 @@ class Texture
 {
   public:
 	Texture();
-	Texture(const char* fileLoc);
+	Texture(const char *fileLoc);
 
 	void LoadTexture();
 	void Bind();
@@ -20,7 +20,7 @@ class Texture
 	unsigned int m_textureID;
 	int m_width, m_height, m_bitDepth;
 
-	char* m_fileLocation;
+	char *m_fileLocation;
 };
 
 #endif
