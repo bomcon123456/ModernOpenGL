@@ -6,6 +6,7 @@
 #include "ShaderReader.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 
 class Shader
 {
@@ -28,6 +29,7 @@ class Shader
 
 	void SetDirectionalLight(DirectionalLight* dLight);
 	void SetPointLights(PointLight* pLights, unsigned int lightCount);
+	void SetSpotLights(SpotLight* sLights, unsigned int lightCount);
 
 	void Bind();
 	void Unbind();
@@ -60,11 +62,29 @@ class Shader
 		unsigned int uniformExponent;
 	} m_uniformPointLight[MAX_POINT_LIGHTS];
 
+	struct {
+		unsigned int uniformColor;
+		unsigned int uniformAmbientIntensity;
+		unsigned int uniformDiffuseIntensity;
+
+		unsigned int uniformPosition;
+		unsigned int uniformDirection;
+
+		unsigned int uniformConstant;
+		unsigned int uniformLinear;
+		unsigned int uniformExponent;
+
+		unsigned int uniformEdge;
+	} m_uniformSpotLight[MAX_SPOT_LIGHTS];
+
 	unsigned int m_uniformSpecularIntensity;
 	unsigned int m_uniformShininess;
 	
 	unsigned int m_pointLightCount;
 	unsigned int m_uniformPointLightCount;
+
+	unsigned int m_spotLightCount;
+	unsigned int m_uniformSpotLightCount;
 
 
 	ShaderReader m_source;

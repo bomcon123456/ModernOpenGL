@@ -10,6 +10,7 @@
 #include "Material.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
@@ -33,6 +34,7 @@ Material dullMaterial;
 
 DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
+SpotLight spotLights[MAX_SPOT_LIGHTS];
 
 float deltaTime = 0.f;
 float lastTime = 0.f;
@@ -153,36 +155,51 @@ int main()
 	camera = Camera(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), -90.f, 0.f, 5.f, 0.5f);
 
 	brickTexture = Texture("res/textures/brick.png");
-	brickTexture.LoadTexture();
+	brickTexture.LoadTextureAlpha();
 
 	dirtTexture = Texture("res/textures/dirt.png");
-	dirtTexture.LoadTexture();
+	dirtTexture.LoadTextureAlpha();
 
 	shinyMaterial = Material(1.f, 32);
 	dullMaterial = Material(0.3f, 4);
 
 	mainLight = DirectionalLight(1.f, 1.f, 1.f,
-								 0.1f, 0.3f,
+								 0.1f, 0.1f,
 								 0.0f, 0.f, -1.f);
 
 	unsigned int pointLightCount = 0;
 	pointLights[0] = PointLight(0.0f, 0.f, 1.f, 
-								0.1f, 0.4f,
+								0.1f, 0.1f,
 								4.f, 0.f, 0.f,
 								0.3f, 0.2f, 0.1f);
-	pointLightCount++;
+	//pointLightCount++;
 	pointLights[1] = PointLight(0.0f, 1.f, 0.f,
-								0.1f, 1.0f,
+								0.1f, 0.1f,
 								-4.f, 2.f, 0.f,
 								0.3f, 0.1f, 0.1f);
-	pointLightCount++;
+	//pointLightCount++;
+
+	unsigned int spotLightCount = 0;
+	spotLights[0] = SpotLight(	1.0f, 1.0f, 1.0f,
+								0.1f, 1.25f,
+								0.0f, 0.f, 0.f,
+								0.0f, -1.f, 0.f,
+								1.0f, 0.0f, 0.0f,
+								20.f);
+	spotLightCount++;
+	spotLights[1] = SpotLight(	1.0f, 1.0f, 1.0f,
+								0.1f, 1.0f,
+								0.0f, 0.f, 0.f,
+								-100.0f, -1.f, 0.f,
+								1.f, 0.0f, 0.0f,
+								20.f);
+	spotLightCount++;
 
 	// Uniform Location
 	unsigned int uniformModel = 0, uniformView = 0, uniformProj = 0, uniformEyePosition = 0;
 
 	unsigned int uniformSpecularIntensity = 0, uniformShininess = 0;
 	// Uniform Location
-
 
 	float bufferWidth = (float)window.GetBufferWidth();
 	float bufferHeight = (float)window.GetBufferHeight();
@@ -215,6 +232,18 @@ int main()
 			uniformShininess= shaderList[0]->GetShininessLocation();
 			///////////////////////////
 
+			glm::vec3 lowerLightPosition = camera.GetCameraPosition() - glm::vec3(0.f, 0.3f, 0.f);
+			spotLights[0].SetFlash(lowerLightPosition, camera.GetCameraDirection());
+
+			// LIGHTING
+			shaderList[0]->SetDirectionalLight(&mainLight);
+			shaderList[0]->SetPointLights(pointLights, pointLightCount);
+			shaderList[0]->SetSpotLights(spotLights, spotLightCount);
+			///////////////////////////
+
+
+
+			// AFFINE TRANSFORMATION
 			// PROJECTION + VIEW MATRIX + Eye Position
 			glm::vec3 eyePos = camera.GetCameraPosition();
 			GLCall(glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.CalculateViewMatrix())));
@@ -222,15 +251,9 @@ int main()
 			GLCall(glUniform3f(uniformEyePosition, eyePos.x, eyePos.y, eyePos.z));
 			////////////////////////////
 
-			// LIGHTING
-			shaderList[0]->SetDirectionalLight(&mainLight);
-			shaderList[0]->SetPointLights(pointLights, pointLightCount);
-			///////////////////////////
-
-			// AFFINE TRANSFORMATION
 			// Create Identity Matrix
 			glm::mat4 model(1.0f);
-			model = glm::translate(model, glm::vec3(0.f, -1.f, 0.f));
+			model = glm::translate(model, glm::vec3(-2.f, -1.f, 0.f));
 
 			GLCall(glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)));
 
@@ -245,7 +268,7 @@ int main()
 			meshList[0]->RenderMesh();
 			brickTexture.Unbind();
 			///////////////////////////
-
+			
 
 			// Second mesh
 

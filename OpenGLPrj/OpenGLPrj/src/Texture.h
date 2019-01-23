@@ -10,7 +10,9 @@ class Texture
 	Texture();
 	Texture(const char *fileLoc);
 
-	void LoadTexture();
+	bool LoadTextureNoAlpha();
+	bool LoadTextureAlpha();
+
 	void Bind();
 	void Unbind();
 

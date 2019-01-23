@@ -16,7 +16,7 @@ public:
 		unsigned int diffuseIntensityLocation, unsigned int positionLocation,
 		unsigned int constantLocation, unsigned int linearLocation, unsigned int expLocation);
 
-private:
+protected:
 	glm::vec3 m_position;
 
 	float m_constant, m_linear, m_exponent;

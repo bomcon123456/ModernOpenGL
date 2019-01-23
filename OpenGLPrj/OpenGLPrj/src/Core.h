@@ -6,9 +6,9 @@
 #include <iostream>
 
 #define MAX_POINT_LIGHTS 3
+#define MAX_SPOT_LIGHTS 3
 
 void __debugbreak();
-
 void GLClear();
 
 bool GLLogError(const char* function, const char* file, int line);
