@@ -54,6 +54,12 @@
     <ClCompile Include="src\SpotLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShadowMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core.h">
@@ -95,6 +101,12 @@
     <ClInclude Include="src\SpotLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ShadowMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\brick.png">
@@ -106,5 +118,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shader\basic.glsl" />
+    <None Include="res\shader\directionalShadowMap.glsl" />
   </ItemGroup>
 </Project>

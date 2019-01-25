@@ -5,8 +5,12 @@ PointLight::PointLight() : Light(), m_position(glm::vec3(0.f, 0.f, 0.f)), m_cons
 
 }
 
-PointLight::PointLight(float red, float green, float blue, float intensity, float diffIntensity, float xPos, float yPos, float zPos, float con, float lin, float exp)
-	: Light(red, green, blue, intensity, diffIntensity), m_position(glm::vec3(xPos, yPos, zPos)), m_constant(con), m_linear(lin), m_exponent(exp)
+PointLight::PointLight(
+	float red, float green, float blue,
+	float intensity, float diffIntensity,
+	float xPos, float yPos, float zPos,
+	float con, float lin, float exp)
+	: Light(1024, 1024, red, green, blue, intensity, diffIntensity), m_position(glm::vec3(xPos, yPos, zPos)), m_constant(con), m_linear(lin), m_exponent(exp)
 {
 
 }

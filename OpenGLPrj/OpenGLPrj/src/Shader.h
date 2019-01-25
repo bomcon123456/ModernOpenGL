@@ -3,6 +3,10 @@
 
 #include "Core.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+
 #include "ShaderReader.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
@@ -31,6 +35,10 @@ class Shader
 	void SetPointLights(PointLight* pLights, unsigned int lightCount);
 	void SetSpotLights(SpotLight* sLights, unsigned int lightCount);
 
+	void SetTexture(unsigned int textureUnit);
+	void SetDirectionalShadowMap(unsigned int textureUnit);
+	void SetDirectionalLightTransform(glm::mat4* lTransform);
+
 	void Bind();
 	void Unbind();
 
@@ -42,6 +50,10 @@ class Shader
 	unsigned int m_uniformModel;
 	unsigned int m_uniformView;
 	unsigned int m_uniformEyePosition;
+
+	unsigned int m_uniformDirectionalLightTransform;
+	unsigned int m_uniformDirectionalShadowMap;
+	unsigned int m_uniformTexture;
 
 	struct {
 		unsigned int uniformColor;

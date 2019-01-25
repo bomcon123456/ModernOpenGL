@@ -22,8 +22,17 @@ void *alloca(unsigned int);
 
 const float toRadians = 3.141559265f / 180.f;
 
+// Uniform Location
+unsigned int uniformModel = 0, uniformView = 0, uniformProj = 0, uniformEyePosition = 0;
+
+unsigned int uniformSpecularIntensity = 0, uniformShininess = 0;
+// Uniform Location
+
+
 std::vector<Shader *> shaderList;
 std::vector<Mesh *> meshList;
+Shader*	 directionalShadowShader;
+
 Camera camera;
 
 Texture brickTexture;
@@ -138,6 +147,75 @@ void CreateShader()
 {
 	Shader *shader1 = new Shader("res/shader/basic.glsl");
 	shaderList.push_back(shader1);
+
+	directionalShadowShader = new Shader("res/shader/directionalShadowMap.glsl");
+	shaderList.push_back(shader1);
+
+}
+
+void Render()
+{
+	glm::mat4 model(1.0f);
+	model = glm::translate(model, glm::vec3(-2.f, -1.f, 0.f));
+
+	GLCall(glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)));
+
+	///////////////////////////
+
+
+
+	// TEXTURE + MATERIAL + DRAW
+	brickTexture.Bind();
+	shinyMaterial.Bind(uniformSpecularIntensity, uniformShininess);
+	///////////////////////////
+	meshList[0]->RenderMesh();
+	brickTexture.Unbind();
+	///////////////////////////
+
+
+	// Second mesh
+
+	// MODEL MATRIX
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(3.f, -1.f, 0.f));
+
+	GLCall(glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)));
+	//////////////////////////
+
+	// TEXTURE + MATERIAL + DRAW
+	dirtTexture.Bind();
+	dullMaterial.Bind(uniformSpecularIntensity, uniformShininess);
+	meshList[1]->RenderMesh();
+	dirtTexture.Bind();
+	/////////////////////////
+
+	// FLOOR
+
+	// MODEL MATRIX
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.f, -2.f, 0.f));
+
+	GLCall(glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)));
+	//////////////////////////
+
+	// TEXTURE + MATERIAL + DRAW
+	dirtTexture.Bind();
+	dullMaterial.Bind(uniformSpecularIntensity, uniformShininess);
+	meshList[2]->RenderMesh();
+	dirtTexture.Bind();
+	/////////////////////////
+}
+
+void DirectionalShadowMapPass(DirectionalLight* light)
+{
+	directionalShadowShader->Bind();
+
+	GLCall(glViewport(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight()));
+
+	light->GetShadowMap()->Write();
+	GLCall(glClear(GL_DEPTH_BUFFER_BIT));
+	
+	uniformModel = directionalShadowShader->GetModelLocation();
 }
 
 int main()
@@ -195,11 +273,6 @@ int main()
 								20.f);
 	spotLightCount++;
 
-	// Uniform Location
-	unsigned int uniformModel = 0, uniformView = 0, uniformProj = 0, uniformEyePosition = 0;
-
-	unsigned int uniformSpecularIntensity = 0, uniformShininess = 0;
-	// Uniform Location
 
 	float bufferWidth = (float)window.GetBufferWidth();
 	float bufferHeight = (float)window.GetBufferHeight();
@@ -252,55 +325,8 @@ int main()
 			////////////////////////////
 
 			// Create Identity Matrix
-			glm::mat4 model(1.0f);
-			model = glm::translate(model, glm::vec3(-2.f, -1.f, 0.f));
+			Render();
 
-			GLCall(glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)));
-
-			///////////////////////////
-
-
-
-			// TEXTURE + MATERIAL + DRAW
-			brickTexture.Bind();
-			shinyMaterial.Bind(uniformSpecularIntensity, uniformShininess);
-			///////////////////////////
-			meshList[0]->RenderMesh();
-			brickTexture.Unbind();
-			///////////////////////////
-			
-
-			// Second mesh
-
-			// MODEL MATRIX
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(3.f, -1.f, 0.f));
-
-			GLCall(glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)));
-			//////////////////////////
-
-			// TEXTURE + MATERIAL + DRAW
-			dirtTexture.Bind();
-			dullMaterial.Bind(uniformSpecularIntensity, uniformShininess);
-			meshList[1]->RenderMesh();
-			dirtTexture.Bind();
-			/////////////////////////
-
-			// FLOOR
-
-			// MODEL MATRIX
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(0.f, -2.f, 0.f));
-
-			GLCall(glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model)));
-			//////////////////////////
-
-			// TEXTURE + MATERIAL + DRAW
-			dirtTexture.Bind();
-			dullMaterial.Bind(uniformSpecularIntensity, uniformShininess);
-			meshList[2]->RenderMesh();
-			dirtTexture.Bind();
-			/////////////////////////
 
 		shaderList[0]->Unbind();
 

@@ -1,4 +1,5 @@
 #include "Shader.h"
+
 void* alloca(unsigned int);
 
 Shader::Shader(const char* filePath)
@@ -105,6 +106,21 @@ void Shader::SetSpotLights(SpotLight* sLights, unsigned int lightCount)
 	}
 }
 
+void Shader::SetTexture(unsigned int textureUnit)
+{
+	GLCall(glUniform1f(m_uniformTexture, textureUnit));
+}
+
+void Shader::SetDirectionalShadowMap(unsigned int textureUnit)
+{
+	GLCall(glUniform1f(m_uniformDirectionalShadowMap, textureUnit));
+}
+
+void Shader::SetDirectionalLightTransform(glm::mat4* lTransform)
+{
+	GLCall(glUniformMatrix4fv(m_uniformDirectionalLightTransform, 1, GL_FALSE, glm::value_ptr(*lTransform)));
+}
+
 void Shader::Bind()
 {
 	GLCall(glUseProgram(m_shaderID));
@@ -189,6 +205,12 @@ void Shader::CreateShader()
 
 	GLCall(m_uniformSpecularIntensity = glGetUniformLocation(m_shaderID, "material.specularIntensity"));
 	GLCall(m_uniformShininess = glGetUniformLocation(m_shaderID, "material.shininess"));
+
+	GLCall(m_uniformTexture = glGetUniformLocation(m_shaderID, "theTexture"));
+	GLCall(m_uniformDirectionalLightTransform = glGetUniformLocation(m_shaderID, "directionalLightSpaceTransform"));
+	GLCall(m_uniformDirectionalShadowMap = glGetUniformLocation(m_shaderID, "directionalShadowMap"));
+
+
 
 	GLCall(m_uniformPointLightCount = glGetUniformLocation(m_shaderID, "pointLightCount"));
 
